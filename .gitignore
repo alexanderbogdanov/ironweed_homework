@@ -19,4 +19,3 @@ target/
 .settings/org.eclipse.buildship.core.prefs
 .vscode
 /.allure/
-/src/test/java/helpers/Env.java
