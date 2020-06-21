@@ -37,7 +37,7 @@ allure {
 //        exclude 'E:/qa_automation/homework/build/'
 //    }
 
-    resultsDir = file('E:/qa_automation/homework/build/allure=results')
+    resultsDir = file('/build/allure=results')
     reportDir = file('build/allure-results')
 
     useJUnit5 {
