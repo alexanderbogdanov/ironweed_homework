@@ -18,7 +18,7 @@ version '1.0-SNAPSHOT'
 
 ext {
     allureVersion = '2.13.3'
-    junitVersion = '5.6.0'
+    junitVersion = '5.6.2'
 }
 
 repositories {
@@ -31,8 +31,20 @@ allure {
     version = "${allureVersion}"
     autoconfigure = true
     aspectjweaver = true
+
+//    resultsGlob = {
+//        include 'E:/qa_automation/homework/build/allure=results'
+//        exclude 'E:/qa_automation/homework/build/'
+//    }
+
+    resultsDir = file('E:/qa_automation/homework/build/allure=results')
+    reportDir = file('build/allure-results')
+
     useJUnit5 {
-        version = "${allureVersion}"
+        version = '2.13.3'
+//    useJUnit5 {
+//        version = "${allureVersion}"
+//    }
     }
 }
 
