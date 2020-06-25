@@ -13,8 +13,11 @@ plugins {
     id 'io.qameta.allure' version '2.8.1'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+group 'cloud.autotests'
+version '1.0'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+defaultTasks 'help'
 
 ext {
     allureVersion = '2.13.3'
@@ -22,7 +25,6 @@ ext {
 }
 
 repositories {
-    jcenter()
     mavenCentral()
 }
 
@@ -31,29 +33,21 @@ allure {
     version = "${allureVersion}"
     autoconfigure = true
     aspectjweaver = true
-
-//    resultsGlob = {
-//        include 'E:/qa_automation/homework/build/allure=results'
-//        exclude 'E:/qa_automation/homework/build/'
-//    }
-
-    resultsDir = file('build/allure=results')
-    reportDir = file('build/allure-results')
+    resultsDir = file(getRootDir().toString() + "/build/allure=results")
 
     useJUnit5 {
-        version = '2.13.3'
-//    useJUnit5 {
-//        version = "${allureVersion}"
-//    }
+        version = "${allureVersion}"
     }
 }
 
 dependencies {
     testImplementation 'org.aspectj:aspectjweaver:1.9.5'
-    testImplementation 'com.codeborne:selenide:5.12.0'
+    testImplementation 'com.codeborne:selenide:5.12.2'
     testImplementation "io.qameta.allure:allure-selenide:${allureVersion}"
     testImplementation "io.qameta.allure:allure-rest-assured:${allureVersion}"
     testImplementation 'io.rest-assured:rest-assured:4.1.2'
+    testImplementation 'io.appium:java-client:7.3.0'
+    testImplementation 'com.fasterxml.jackson.core:jackson-annotations:2.10.3'
     testImplementation 'ch.qos.logback:logback-classic:1.2.3'
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
@@ -66,8 +60,25 @@ tasks.withType(JavaCompile) {
 
 tasks.withType(Test) {
     systemProperties = System.properties
+    if (project.hasProperty("web_threads")) {
+        systemProperties += [
+                'junit.jupiter.execution.parallel.enabled'                 : true,
+                'junit.jupiter.execution.parallel.mode.default'            : 'concurrent',
+                'junit.jupiter.execution.parallel.mode.classes.default'    : 'concurrent',
+                'junit.jupiter.execution.parallel.config.strategy'         : 'fixed',
+                'junit.jupiter.execution.parallel.config.fixed.parallelism': project.getProperty("web_threads").toInteger()
+        ]
+    }
+    testLogging {
+        lifecycle {
+            events "started", "skipped", "failed", "standard_error", "standard_out"
+            exceptionFormat "short"
+        }
+    }
+    if (project.hasProperty("allure_results")) {
+        systemProperty 'allure_results', project.getProperty("allure_results")
+    }
 }
-
 
 task facebook_tests(type: Test) {
     useJUnitPlatform {
